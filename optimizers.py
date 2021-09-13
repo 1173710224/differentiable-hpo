@@ -336,16 +336,12 @@ class Optimizer():
             output_path = "./dehp_out"
         )
         trajectory, runtime, history = dehb.run(
-            total_cost=10, 
+            fevals=DEHBALLCOST, 
             verbose=False,
             save_intermediate=False,
             max_budget=dehb.max_budget,
             param_space=param_space
         )
-        print("trajectory is {}".format(trajectory))
-        print("history is {}".format(history))
-        print("inc_score is {}".format(-dehb.inc_score))
-        print("inc_config is {}".format(-dehb.inc_config))
         return runtime, -dehb.inc_score, transform_space(param_space, dehb.inc_config), self.ea_respool, self.loss_set
 
     def target_function(self, config, budget, **kwargs):
@@ -369,9 +365,8 @@ class Optimizer():
                     "budget": -1
                 }
             }
-                    
         accu = trainer.objective()
-        self.loss_set.append(trainer.multi_loss_seq)
+        self.loss_set.append(trainer.loss_sequence)
         self.ea_respool.append((config, accu))
         print("accu:{}".format(accu))
         cost = time.perf_counter() - st
@@ -591,7 +586,7 @@ class OptimizerDense():
             output_path = "./dehp_out"
         )
         trajectory, runtime, history = dehb.run(
-            total_cost=10, 
+            fevals=DEHBALLCOST, 
             verbose=False,
             save_intermediate=False,
             max_budget=dehb.max_budget,
@@ -628,22 +623,74 @@ class OptimizerDense():
 
 
 if __name__ == "__main__":
-    # optimizer = OptimizerDense(IRIS)
-    # res = optimizer.dehb()
-    # print(res)
-    # with open("result/{}-{}".format(IRIS, DEHBNAME), "wb") as f:
-    #     pickle.dump(res, f)
-    for dataset in [CAR]:
-        optimizer = OptimizerDense(dataset)
+    for dataset in [MNIST, SVHN]:
+        optimizer = Optimizer(dataset)
+        res = optimizer.dehb()
+        print(res)
+        with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.bayes()
+        print(res)
+        with open("result/{}-{}".format(dataset, BAYES), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.zoopt()
+        print(res)
+        with open("result/{}-{}".format(dataset, ZOOPT), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.rand()
+        print(res)
+        with open("result/{}-{}".format(dataset, RAND), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.hyper_band()
+        print(res)
+        with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.dhpo()
+        print(res)
+        with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
+            pickle.dump(res, f)
         res = optimizer.dhpo_oneround()
         print(res)
         with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
             pickle.dump(res, f)
 
-    # for dataset in [MNIST, SVHN]:
-    #     optimizer = Optimizer(dataset)
-    #     res = optimizer.dehb()
-    #     print(res)
-    #     with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
-    #         pickle.dump(res, f)
+        
+    for dataset in SMALLDATASETS:
+        optimizer = OptimizerDense(dataset)
+        res = optimizer.dehb()
+        print(res)
+        with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.bayes()
+        print(res)
+        with open("result/{}-{}".format(dataset, BAYES), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.zoopt()
+        print(res)
+        with open("result/{}-{}".format(dataset, ZOOPT), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.rand()
+        print(res)
+        with open("result/{}-{}".format(dataset, RAND), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.ga()
+        print(res)
+        with open("result/{}-{}".format(dataset, GENETICA), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.pso()
+        print(res)
+        with open("result/{}-{}".format(dataset, PARTICLESO), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.dhpo()
+        print(res)
+        with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.dhpo_oneround()
+        print(res)
+        with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
+            pickle.dump(res, f)
+        res = optimizer.hyper_band()
+        print(res)
+        with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
+            pickle.dump(res, f)
     pass
