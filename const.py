@@ -1,0 +1,180 @@
+# global
+TESTMODE = False
+
+VALTIMES = 3
+BAYESINIT = 5
+BAYESITER = 25
+ZOOPTBUDGET = 30
+RANDTIMES = 30
+EAPOP = 10
+EAITER = 10
+DHPOTIMES = 10
+METALR = 0.01
+
+BAYES = "bayes"
+ZOOPT = "zoopt"
+RAND = "rand"
+GENETICA = "ga"
+PARTICLESO = "pso"
+DHPO = "dhpo"
+DHPO_ONE_ROUND = "dhpo_round1"
+HYPERBAND = "hyperband"
+DEHBNAME = "dehb"
+MODELS = [BAYES, ZOOPT, RAND, GENETICA, DEHBNAME,
+          PARTICLESO, DHPO, HYPERBAND, DHPO_ONE_ROUND]
+SMALLS = "smalls"
+
+
+# exp1
+CONV11CHANNEL = "conv11_channel_size"
+CONV11KERNEL = "conv11_kernel_size"
+CONV12CHANNEL = "conv12_channel_size"
+CONV12KERNEL = "conv12_kernel_size"
+CONV13CHANNEL = "conv13_channel_size"
+CONV13KERNEL = "conv13_kernel_size"
+POOL1TYPE = "pooling1_type"
+POOL1KERNEL = "pooling1_kernel_size"
+CONV21CHANNEL = "conv21_channel_size"
+CONV21KERNEL = "conv21_kernel_size"
+CONV22CHANNEL = "conv22_channel_size"
+CONV22KERNEL = "conv22_kernel_size"
+CONV23CHANNEL = "conv23_channel_size"
+CONV23KERNEL = "conv23_kernel_size"
+POOL2TYPE = "pooling2_type"
+POOL2KERNEL = "pooling2_kernel_size"
+LR = "learning_rate"
+
+MAXPOOL = "max"
+AVGPOOL = "avg"
+SVHN = "svhn"
+MNIST = "mnist"
+
+PARAMNAMES = [
+    CONV11CHANNEL,
+    CONV11KERNEL,
+    CONV12CHANNEL,
+    CONV12KERNEL,
+    CONV13CHANNEL,
+    CONV13KERNEL,
+    POOL1TYPE,
+    POOL1KERNEL,
+    CONV21CHANNEL,
+    CONV21KERNEL,
+    CONV22CHANNEL,
+    CONV22KERNEL,
+    CONV23CHANNEL,
+    CONV23KERNEL,
+    POOL2TYPE,
+    POOL2KERNEL,
+    LR,
+]
+POOLINDEX2TYPE = {
+    0: MAXPOOL,
+    1: AVGPOOL
+}
+
+
+EPOCHS = 30
+BATCHSIZE = 500
+CHANNELTOP = 8
+KERNELTOP = 5
+
+TESTPARAM = {
+    CONV11CHANNEL: 2,
+    CONV11KERNEL: 3,
+    CONV12CHANNEL: 2,
+    CONV12KERNEL: 3,
+    CONV13CHANNEL: 2,
+    CONV13KERNEL: 3,
+    POOL1TYPE: MAXPOOL,
+    POOL1KERNEL: 2,
+    CONV21CHANNEL: 2,
+    CONV21KERNEL: 3,
+    CONV22CHANNEL: 2,
+    CONV22KERNEL: 3,
+    CONV23CHANNEL: 2,
+    CONV23KERNEL: 3,
+    POOL2TYPE: MAXPOOL,
+    POOL2KERNEL: 2,
+    LR: 0.001,
+}
+# TESTPARAM = {
+#     CONV11CHANNEL: " ",
+#     CONV11KERNEL: " ",
+#     CONV12CHANNEL: " ",
+#     CONV12KERNEL: " ",
+#     CONV13CHANNEL: " ",
+#     CONV13KERNEL: " ",
+#     POOL1TYPE: " ",
+#     POOL1KERNEL: " ",
+#     CONV21CHANNEL: " ",
+#     CONV21KERNEL: " ",
+#     CONV22CHANNEL: " ",
+#     CONV22KERNEL: " ",
+#     CONV23CHANNEL: " ",
+#     CONV23KERNEL: " ",
+#     POOL2TYPE: " ",
+#     POOL2KERNEL: " ",
+# }
+
+# exp2
+DENSE1SIZE = "dense1_size"
+DENSE2SIZE = "dense2_size"
+DENSE3SIZE = "dense3_size"
+
+IRIS = "iris"
+WINE = "wine"
+CAR = "car"
+AGARICUS = "agaricus_lepiota"
+DOTA2 = "dota2"
+SMALLDATASETS = [IRIS, WINE, CAR, AGARICUS]
+SIDMOID = "sigmoid"
+PRELU = "prelu"
+
+PARAMNAMESDENSE = [DENSE1SIZE, DENSE2SIZE, DENSE3SIZE, LR]
+
+EPOCHSDENSE = 50
+DENSETOP = 1000
+
+TESTPARAMDENSE = {
+    DENSE1SIZE: 64,
+    DENSE2SIZE: 128,
+    DENSE3SIZE: 64,
+    LR: 0.1
+}
+# DENSE1IRISTOP = 8
+# DENSE2IRISTOP = 16
+# DENSE3IRISTOP = 8
+
+
+# DENSE1WINETOP = 16
+# DENSE2WINETOP = 32
+# DENSE3WINETOP = 16
+
+# DENSE1CARTOP = 32
+# DENSE2CARTOP = 64
+# DENSE3CARTOP = 32
+
+# DENSE1AGARICUSTOP = 64
+# DENSE2AGARICUSTOP = 128
+# DENSE3AGARICUSTOP = 64
+
+# DENSE1DOTATOP = 256
+# DENSE2DOTATOP = 512
+# DENSE3DOTATOP = 128
+if TESTMODE:
+    VALTIMES = 1
+    EPOCHS = 2
+    EPOCHSDENSE = 2
+    BAYESINIT = 3
+    BAYESITER = 3
+    ZOOPTBUDGET = 4
+    RANDTIMES = 3
+    EAPOP = 4
+    EAITER = 4
+    DHPOTIMES = 1
+
+
+if __name__ == "__main__":
+    print(PARAMNAMES)
+    pass

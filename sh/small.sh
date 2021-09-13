@@ -1,0 +1,1 @@
+nohup python main.py --dataset smalls >> log/smalls.log 2>&1 &
