@@ -3,6 +3,7 @@ from utils import Data, DataPrefetcher
 import torch
 from const import *
 import torch.nn.functional as F
+import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -91,6 +92,14 @@ class Trainer():
             accu_sum += float(self.val())
         return accu_sum/VALTIMES
 
+    def multi_obj(self):
+        accu_seq = []
+        for i in range(3):
+            self.train()
+            accu_seq.append(self.val().cpu().numpy())
+        accu_seq = np.array(accu_seq)
+        return accu_seq.max(), accu_seq.std()
+
 
 class DhpoTrainer():
     def __init__(self, dataset) -> None:
@@ -141,7 +150,8 @@ class DhpoTrainer():
                 loss_sum += loss.item() * len(imgs)
                 img_num += len(imgs)
             self.loss_sequence.append(loss_sum * 1.0 / img_num)
-            print("Epoch~{}->{}".format(i+1, loss_sum * 1.0 / img_num))
+            # print("Epoch~{}->{}".format(i+1, loss_sum * 1.0 / img_num))
+            print(self.model.get_hparams())
         return
 
     def val(self):
@@ -319,15 +329,14 @@ class DhpoTrainerDense():
 
 
 if __name__ == "__main__":
-    # trainer = Trainer(SVHN, TESTPARAM)
-    # trainer = DhpoTrainer(MNIST)
-    trainer = DhpoTrainerDense(WINE)
-    trainer.train()
-    accu = trainer.val()
-    print(accu)
-    # trainer = TrainerDense(IRIS, TESTPARAMDENSE)
-    # trainer.train()
-    # accu = trainer.val()
-    # print(accu)
-
+    trainer = Trainer(MNIST, param1)
+    print(trainer.multi_obj())
+    trainer = Trainer(MNIST, param2)
+    print(trainer.multi_obj())
+    trainer = Trainer(MNIST, param3)
+    print(trainer.multi_obj())
+    trainer = Trainer(MNIST, param4)
+    print(trainer.multi_obj())
+    trainer = Trainer(MNIST, param5)
+    print(trainer.multi_obj())
     pass

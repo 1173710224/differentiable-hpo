@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 from trainers import TrainerDense
+from scipy.interpolate import make_interp_spline
 
 
 class Parser():
@@ -225,6 +226,60 @@ class ROCAUC():
         return
 
 
+class case_study():
+    def __init__(self) -> None:
+        pass
+
+    def plt_loss(self):
+        x = [i + 1 for i in range(30)]
+        losses = np.array(loss_res).reshape((5, 3, 30)).mean(axis=1)
+        for i in range(len(losses)):
+            plt.plot(x, losses[i], linewidth=1.5,
+                     label="{}th params".format(i + 1))
+        plt.legend()
+        plt.savefig("case_study_fig/cs_loss_global.png")
+        plt.cla()
+
+        # for i in range(len(losses)):
+        #     plt.plot(x[5:15], losses[i][5:15], linewidth=1.5,
+        #              label="{}th params".format(i + 1))
+        # plt.legend()
+        # plt.savefig("case_study_fig/cs_loss_local1.png")
+        # plt.cla()
+
+        # for i in range(len(losses)):
+        #     plt.plot(x[20:30], losses[i][20:30], linewidth=1.5,
+        #              label="{}th params".format(i + 1))
+        # plt.legend()
+        # plt.savefig("case_study_fig/cs_loss_local2.png")
+        # plt.cla()
+
+        for i in range(len(losses)):
+            plt.plot(x[5:30], losses[i][5:30], linewidth=1.5,
+                     label="{}th params".format(i + 1))
+        plt.legend()
+        plt.savefig("case_study_fig/cs_loss_local.png")
+        plt.cla()
+
+        return
+
+    def plt_accu(self):
+        x = np.array([i + 1 for i in range(5)])
+        accus = np.array(accu_res)
+        accu_l = accus[:, 0] - accus[:, 1]
+        accu_u = accus[:, 0] + accus[:, 1]
+        accu_mean = accus[:, 0]
+        x_smooth = np.linspace(x.min(), x.max(), 300)
+        accu_mean = make_interp_spline(x, accu_mean)(x_smooth)
+        accu_l = make_interp_spline(x, accu_l)(x_smooth)
+        accu_u = make_interp_spline(x, accu_u)(x_smooth)
+        plt.plot(x_smooth, accu_mean, linewidth=1.5, c="r")
+        plt.fill_between(x_smooth, accu_l, accu_u, color="blue", alpha=0.1)
+        plt.xticks([1, 2, 3, 4, 5], ["1th", "2th", "3th", "4th", "5th"])
+        plt.savefig("case_study_fig/cs_accu.png")
+        return
+
+
 if __name__ == "__main__":
     # dataset = SVHN
     # construct_loss_with_dataset_and_model(dataset, BAYES)
@@ -237,6 +292,7 @@ if __name__ == "__main__":
     # plt_loss(CAR)
 
     # construct_table_data_with_dataset(CAR)
-    rocauc = ROCAUC()
-    rocauc.run()
+    study = case_study()
+    # study.plt_loss()
+    study.plt_accu()
     pass

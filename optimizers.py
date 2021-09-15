@@ -282,10 +282,10 @@ class Optimizer():
         st = time.perf_counter()
         for _ in range(1):
             trainer.model.reset_parameters()
-            # trainer.train()
-            accu = trainer.objective()
+            trainer.train()
+            # accu = trainer.objective()
             self.loss_set.append(trainer.multi_loss_seq)
-            # accu = trainer.val()
+            accu = trainer.val()
             self.dhpo_respool.append((trainer.model.get_hparams(), accu))
             if accu > best_accu:
                 best_accu = accu
@@ -705,8 +705,8 @@ if __name__ == "__main__":
     # with open("result/{}-{}".format(MNIST, DEHBNAME), "wb") as f:
     #     pickle.dump(res, f)
 
-    dataset = SVHN
-    optimizer = Optimizer(dataset)
+    # dataset = SVHN
+    # optimizer = Optimizer(dataset)
     # res = optimizer.dehb()
     # print(res)
     # with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
@@ -723,24 +723,22 @@ if __name__ == "__main__":
     # print(res)
     # with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
     #     pickle.dump(res, f)
-    res = optimizer.dhpo()
-    print(res)
-    with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
-        pickle.dump(res, f)
+    # res = optimizer.dhpo()
+    # print(res)
+    # with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
+    #     pickle.dump(res, f)
     # res = optimizer.dhpo_oneround()
     # print(res)
     # with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
     #     pickle.dump(res, f)
 
-    # optimizer = Optimizer(MNIST)
-    # res = optimizer.dhpo()
-    # print(res)
-    # with open("result/{}-{}".format(MNIST, DHPO), "wb") as f:
-    #     pickle.dump(res, f)
+    optimizer = Optimizer(MNIST)
+    res = optimizer.dhpo_oneround()
 
     # optimizer = OptimizerDense(CAR)
     # res = optimizer.rand()
     # print(res[:3])
     # with open("result/{}-{}".format(WINE, DHPO), "wb") as f:
     #     pickle.dump(res, f)
+
     pass
