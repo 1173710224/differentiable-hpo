@@ -416,9 +416,11 @@ class DhpoConvSVHN(nn.Module):
         self.conv1_1.reset_parameters()
         self.conv1_2.reset_parameters()
         self.conv1_3.reset_parameters()
+        self.pool1.reset_parameters()
         self.conv2_1.reset_parameters()
         self.conv2_2.reset_parameters()
         self.conv2_3.reset_parameters()
+        self.pool2.reset_parameters()
         self.dense1.reset_parameters()
         self.dense3.reset_parameters()
         self.dense5.reset_parameters()
@@ -507,9 +509,11 @@ class DhpoConvMNIST(nn.Module):
         self.conv1_1.reset_parameters()
         self.conv1_2.reset_parameters()
         self.conv1_3.reset_parameters()
+        self.pool1.reset_parameters()
         self.conv2_1.reset_parameters()
         self.conv2_2.reset_parameters()
         self.conv2_3.reset_parameters()
+        self.pool2.reset_parameters()
         self.dense1.reset_parameters()
         self.dense3.reset_parameters()
         self.dense5.reset_parameters()
@@ -568,6 +572,7 @@ class DhpoLinear(nn.Module):
         pass
 
     def reset_parameters(self):
+        self.dense.reset_parameters()
         init.uniform_(self.selecter_base, -1, 1)
         init.uniform_(self.selecter_controller, -1, 1)
         return
@@ -611,7 +616,6 @@ class DhpoDnn(nn.Module):
         self.dense2 = DhpoLinear(DENSETOP, DENSETOP, PRELU)
         self.dense3 = DhpoLinear(DENSETOP, DENSETOP, SIDMOID)
         self.dense4 = Linear(DENSETOP, nclass)
-        self.selecter1_base = Parameter(torch.Tensor(8, 1, 1, 1, 1))
         self.prelu = PReLU()
     pass
 

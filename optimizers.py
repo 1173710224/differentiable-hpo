@@ -11,6 +11,7 @@ import pickle
 import numpy as np
 from DEHB.dehb import DEHB
 
+
 def transform_space(param_space, configuration):
     assert len(configuration) == len(param_space)
     config_dict = dict()
@@ -32,6 +33,7 @@ def transform_space(param_space, configuration):
         else:
             config_dict[k] = value
     return config_dict
+
 
 class Optimizer():
     def __init__(self, dataset) -> None:
@@ -242,7 +244,7 @@ class Optimizer():
             if name == POOL1TYPE or name == POOL2TYPE:
                 ans[name] = POOLINDEX2TYPE[int(param_values[i])]
         return ans
-    
+
     def ea_format_param_dehp(self, param_values):
         ans = {}
         print(param_values)
@@ -280,9 +282,10 @@ class Optimizer():
         st = time.perf_counter()
         for _ in range(1):
             trainer.model.reset_parameters()
-            trainer.train()
-            self.loss_set.append(trainer.loss_sequence)
+            # trainer.train()
             accu = trainer.objective()
+            self.loss_set.append(trainer.multi_loss_seq)
+            # accu = trainer.val()
             self.dhpo_respool.append((trainer.model.get_hparams(), accu))
             if accu > best_accu:
                 best_accu = accu
@@ -306,51 +309,52 @@ class Optimizer():
         self.loss_set = []
         self.ea_respool = []
         param_space = {
-            CONV11CHANNEL: [1,CHANNELTOP,int,False],
-            CONV11KERNEL: [2,KERNELTOP,int,False],
-            CONV12CHANNEL: [1,CHANNELTOP,int,False],
-            CONV12KERNEL: [2,KERNELTOP,int,False],
-            CONV13CHANNEL: [1,CHANNELTOP,int,False],
-            CONV13KERNEL: [2,KERNELTOP,int,False],
-            POOL1TYPE: [0,1,int,False],
-            POOL1KERNEL: [2,KERNELTOP,int,False],
-            CONV21CHANNEL: [1,CHANNELTOP,int,False],
-            CONV21KERNEL: [2,KERNELTOP,int,False],
-            CONV22CHANNEL: [1,CHANNELTOP,int,False],
-            CONV22KERNEL: [2,KERNELTOP,int,False],
-            CONV23CHANNEL: [1,CHANNELTOP,int,False],
-            CONV23KERNEL: [2,KERNELTOP,int,False],
-            POOL2TYPE: [0,1,int,False],
-            POOL2KERNEL: [2,KERNELTOP,int,False],
+            CONV11CHANNEL: [1, CHANNELTOP, int, False],
+            CONV11KERNEL: [2, KERNELTOP, int, False],
+            CONV12CHANNEL: [1, CHANNELTOP, int, False],
+            CONV12KERNEL: [2, KERNELTOP, int, False],
+            CONV13CHANNEL: [1, CHANNELTOP, int, False],
+            CONV13KERNEL: [2, KERNELTOP, int, False],
+            POOL1TYPE: [0, 1, int, False],
+            POOL1KERNEL: [2, KERNELTOP, int, False],
+            CONV21CHANNEL: [1, CHANNELTOP, int, False],
+            CONV21KERNEL: [2, KERNELTOP, int, False],
+            CONV22CHANNEL: [1, CHANNELTOP, int, False],
+            CONV22KERNEL: [2, KERNELTOP, int, False],
+            CONV23CHANNEL: [1, CHANNELTOP, int, False],
+            CONV23KERNEL: [2, KERNELTOP, int, False],
+            POOL2TYPE: [0, 1, int, False],
+            POOL2KERNEL: [2, KERNELTOP, int, False],
             LR: [0.0001, 0.01, float, False],
         }
         dimensions = len(param_space)
         # Declaring the fidelity range
         min_budget, max_budget = 2, 50
+        st = time.perf_counter()
         dehb = DEHB(
-            f=self.target_function, 
-            dimensions=dimensions, 
-            min_budget=min_budget, 
+            f=self.target_function,
+            dimensions=dimensions,
+            min_budget=min_budget,
             max_budget=max_budget,
             n_workers=1,
-            output_path = "./dehp_out"
+            output_path="./dehp_out"
         )
         trajectory, runtime, history = dehb.run(
-            fevals=DEHBALLCOST, 
+            fevals=DEHBALLCOST,
             verbose=False,
             save_intermediate=False,
             max_budget=dehb.max_budget,
             param_space=param_space
         )
-        return runtime, -dehb.inc_score, transform_space(param_space, dehb.inc_config), self.ea_respool, self.loss_set
+        return time.perf_counter()-st, -dehb.inc_score, transform_space(param_space, dehb.inc_config), self.ea_respool, self.loss_set
 
     def target_function(self, config, budget, **kwargs):
         max_budget = kwargs["max_budget"]
-        
+
         # Mapping [0, 1]-vector to Sklearn parameters
         param_space = kwargs["param_space"]
         config = transform_space(param_space, config)
-        
+
         if budget is None:
             budget = max_budget
         config = self.ea_format_param_dehp(config)
@@ -379,6 +383,7 @@ class Optimizer():
             }
         }
         return result
+
 
 class OptimizerDense():
     def __init__(self, dataset) -> None:
@@ -522,7 +527,6 @@ class OptimizerDense():
         trainer = DhpoTrainerDense(self.dataset)
         st = time.perf_counter()
         for _ in range(DHPOTIMES):
-            trainer.model.reset_parameters()
             trainer.train()
             self.loss_set.append(trainer.loss_sequence)
             accu = trainer.val()
@@ -542,9 +546,10 @@ class OptimizerDense():
         st = time.perf_counter()
         for _ in range(1):
             trainer.model.reset_parameters()
-            trainer.train()
+            # trainer.train()
+            accu = trainer.objective()
             self.loss_set.append(trainer.loss_sequence)
-            accu = trainer.val()
+            # accu = trainer.val()
             self.dhpo_respool.append((trainer.model.get_hparams(), accu))
             if accu > best_accu:
                 best_accu = accu
@@ -568,25 +573,25 @@ class OptimizerDense():
         self.loss_set = []
         self.ea_respool = []
         param_space = {
-            DENSE1SIZE: [1,DENSETOP,int,False],
-            DENSE2SIZE: [1,DENSETOP,int,False],
-            DENSE3SIZE: [1,DENSETOP,int,False],
-            LR: [0.0001,0.01,float,False],
+            DENSE1SIZE: [1, DENSETOP, int, False],
+            DENSE2SIZE: [1, DENSETOP, int, False],
+            DENSE3SIZE: [1, DENSETOP, int, False],
+            LR: [0.0001, 0.01, float, False],
         }
         dimensions = len(param_space)
         # Declaring the fidelity range
         min_budget, max_budget = 2, 50
         st = time.perf_counter()
         dehb = DEHB(
-            f=self.target_function, 
-            dimensions=dimensions, 
-            min_budget=min_budget, 
+            f=self.target_function,
+            dimensions=dimensions,
+            min_budget=min_budget,
             max_budget=max_budget,
             n_workers=1,
-            output_path = "./dehp_out"
+            output_path="./dehp_out"
         )
         trajectory, runtime, history = dehb.run(
-            fevals=DEHBALLCOST, 
+            fevals=DEHBALLCOST,
             verbose=False,
             save_intermediate=False,
             max_budget=dehb.max_budget,
@@ -596,16 +601,16 @@ class OptimizerDense():
 
     def target_function(self, config, budget, **kwargs):
         max_budget = kwargs["max_budget"]
-        
+
         # Mapping [0, 1]-vector to Sklearn parameters
         param_space = kwargs["param_space"]
         config = transform_space(param_space, config)
-        
+
         if budget is None:
             budget = max_budget
         config = self.ea_format_param_dehp(config)
         trainer = TrainerDense(self.dataset, config)
-        st = time.perf_counter()       
+        st = time.perf_counter()
         accu = trainer.objective()
         self.loss_set.append(trainer.multi_loss_seq)
         self.ea_respool.append((config, accu))
@@ -623,74 +628,119 @@ class OptimizerDense():
 
 
 if __name__ == "__main__":
-    for dataset in [MNIST, SVHN]:
-        optimizer = Optimizer(dataset)
-        res = optimizer.dehb()
-        print(res)
-        with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.bayes()
-        print(res)
-        with open("result/{}-{}".format(dataset, BAYES), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.zoopt()
-        print(res)
-        with open("result/{}-{}".format(dataset, ZOOPT), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.rand()
-        print(res)
-        with open("result/{}-{}".format(dataset, RAND), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.hyper_band()
-        print(res)
-        with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.dhpo()
-        print(res)
-        with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.dhpo_oneround()
-        print(res)
-        with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
-            pickle.dump(res, f)
+    # for dataset in [MNIST, SVHN]:
+    #     optimizer = Optimizer(dataset)
+    #     res = optimizer.dehb()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.bayes()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, BAYES), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.zoopt()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, ZOOPT), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.rand()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, RAND), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.hyper_band()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.dhpo()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.dhpo_oneround()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
+    #         pickle.dump(res, f)
 
-        
-    for dataset in SMALLDATASETS:
-        optimizer = OptimizerDense(dataset)
-        res = optimizer.dehb()
-        print(res)
-        with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.bayes()
-        print(res)
-        with open("result/{}-{}".format(dataset, BAYES), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.zoopt()
-        print(res)
-        with open("result/{}-{}".format(dataset, ZOOPT), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.rand()
-        print(res)
-        with open("result/{}-{}".format(dataset, RAND), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.ga()
-        print(res)
-        with open("result/{}-{}".format(dataset, GENETICA), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.pso()
-        print(res)
-        with open("result/{}-{}".format(dataset, PARTICLESO), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.dhpo()
-        print(res)
-        with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.dhpo_oneround()
-        print(res)
-        with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
-            pickle.dump(res, f)
-        res = optimizer.hyper_band()
-        print(res)
-        with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
-            pickle.dump(res, f)
+    # for dataset in [WINE, CAR]:
+    #     # for dataset in SMALLDATASETS:
+    #     optimizer = OptimizerDense(dataset)
+    #     res = optimizer.dehb()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.bayes()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, BAYES), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.zoopt()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, ZOOPT), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.rand()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, RAND), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.ga()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, GENETICA), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.pso()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, PARTICLESO), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.dhpo()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
+    #         pickle.dump(res, f)
+    #     res = optimizer.dhpo_oneround()
+    #     print(res)
+    #     with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
+    #         pickle.dump(res, f)
+    # res = optimizer.hyper_band()
+    # print(res)
+    # with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
+    #     pickle.dump(res, f)
+
+    # optimizer = Optimizer(MNIST)
+    # res = optimizer.dehb()
+    # print(res)
+    # with open("result/{}-{}".format(MNIST, DEHBNAME), "wb") as f:
+    #     pickle.dump(res, f)
+
+    dataset = SVHN
+    optimizer = Optimizer(dataset)
+    # res = optimizer.dehb()
+    # print(res)
+    # with open("result/{}-{}".format(dataset, DEHBNAME), "wb") as f:
+    #     pickle.dump(res, f)
+    # res = optimizer.zoopt()
+    # print(res)
+    # with open("result/{}-{}".format(dataset, ZOOPT), "wb") as f:
+    #     pickle.dump(res, f)
+    # res = optimizer.rand()
+    # print(res)
+    # with open("result/{}-{}".format(dataset, RAND), "wb") as f:
+    #     pickle.dump(res, f)
+    # res = optimizer.hyper_band()
+    # print(res)
+    # with open("result/{}-{}".format(dataset, HYPERBAND), "wb") as f:
+    #     pickle.dump(res, f)
+    res = optimizer.dhpo()
+    print(res)
+    with open("result/{}-{}".format(dataset, DHPO), "wb") as f:
+        pickle.dump(res, f)
+    # res = optimizer.dhpo_oneround()
+    # print(res)
+    # with open("result/{}-{}".format(dataset, DHPO_ONE_ROUND), "wb") as f:
+    #     pickle.dump(res, f)
+
+    # optimizer = Optimizer(MNIST)
+    # res = optimizer.dhpo()
+    # print(res)
+    # with open("result/{}-{}".format(MNIST, DHPO), "wb") as f:
+    #     pickle.dump(res, f)
+
+    # optimizer = OptimizerDense(CAR)
+    # res = optimizer.rand()
+    # print(res[:3])
+    # with open("result/{}-{}".format(WINE, DHPO), "wb") as f:
+    #     pickle.dump(res, f)
     pass

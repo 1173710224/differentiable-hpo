@@ -33,11 +33,11 @@ if __name__ == "__main__":
     # data = read(MNIST, DEHBNAME)
     # print("{}-{}\n{}\n".format(MNIST, DEHBNAME, data[:4]))
     # for dataset in SMALLDATASETS:
-        # data = read(dataset, DEHBNAME)
-        # print("{}-{}\n{}\n".format(dataset, DEHBNAME, data[:4]))
+    # data = read(dataset, DEHBNAME)
+    # print("{}-{}\n{}\n".format(dataset, DEHBNAME, data[:4]))
     # data = read(SVHN, DEHBNAME)
     # print("{}-{}\n{}\n".format(SVHN, DEHBNAME, data))
-    
+
     # print(read(SVHN, DHPO)[:3])
     # print(read(MNIST, ZOOPT)[:3])
     # data = read(SVHN, HYPERBAND)
@@ -45,8 +45,11 @@ if __name__ == "__main__":
     # data = read(MNIST, HYPERBAND)
     # print("{}-{}\n{}\n".format(MNIST, HYPERBAND, data[:3]))
 
-
-    for dataset in SMALLDATASETS:
-        data = read(dataset, DEHBNAME)
-        print("{}-{}'s objective number:{}".format(dataset,DEHBNAME,len(data[4])))
+    # for model in MODELS:
+    #     data = read(WINE, model)
+    #     print("{}-{}'s objective number:{}".format(WINE, model, data[:3]))
+    # for model in CONVMODELS:
+    #     print("{}-{} result is: {}".format(MNIST, model, read(MNIST, model)[:3]))
+    # print(read(IRIS, DHPO_ONE_ROUND)[:3])
+    print(read(CAR, DHPO)[:3])
     pass

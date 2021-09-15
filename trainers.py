@@ -38,6 +38,7 @@ class Trainer():
         pass
 
     def train(self):
+        self.model.reset_parameters()
         self.optimizier = torch.optim.Adam(
             self.model.parameters(), lr=0.001)
         self.loss_sequence = []
@@ -85,7 +86,6 @@ class Trainer():
         self.multi_loss_seq = []
         accu_sum = 0
         for i in range(VALTIMES):
-            self.model.reset_parameters()
             self.train()
             self.multi_loss_seq.append(self.loss_sequence)
             accu_sum += float(self.val())
@@ -118,6 +118,7 @@ class DhpoTrainer():
         pass
 
     def train(self):
+        self.model.reset_parameters()
         self.optimizier = torch.optim.Adam(
             self.model.parameters(), lr=0.001)
         self.loss_sequence = []
@@ -163,7 +164,6 @@ class DhpoTrainer():
         self.multi_loss_seq = []
         accu_sum = 0
         for i in range(VALTIMES):
-            self.model.reset_parameters()
             self.train()
             self.multi_loss_seq.append(self.loss_sequence)
             accu_sum += float(self.val())
@@ -212,6 +212,7 @@ class TrainerDense():
         pass
 
     def train(self):
+        self.model.reset_parameters()
         self.optimizier = torch.optim.Adam(
             self.model.parameters(), lr=0.001)
         self.loss_sequence = []
@@ -223,7 +224,8 @@ class TrainerDense():
             self.optimizier.zero_grad()
             loss.backward()
             self.optimizier.step()
-            print("Epoch~{}->{}".format(i+1, loss.item()))
+            if i % 20 == 0:
+                print("Epoch~{}->{}".format(i+1, loss.item()))
             self.loss_sequence.append(loss.item())
         return
 
@@ -238,7 +240,6 @@ class TrainerDense():
         self.multi_loss_seq = []
         accu_sum = 0
         for i in range(VALTIMES):
-            self.model.reset_parameters()
             self.train()
             self.multi_loss_seq.append(self.loss_sequence)
             accu_sum += float(self.val())
@@ -283,10 +284,11 @@ class DhpoTrainerDense():
         pass
 
     def train(self):
+        self.model.reset_parameters()
+        self.model.train()
         self.optimizier = torch.optim.Adam(
             self.model.parameters(), lr=0.001)
         self.loss_sequence = []
-        self.model.train()
         for i in range(EPOCHSDENSE):
             x, y = self.train_data
             preds = self.model(x)
@@ -294,7 +296,8 @@ class DhpoTrainerDense():
             self.optimizier.zero_grad()
             loss.backward()
             self.optimizier.step()
-            print("Epoch~{}->{}".format(i+1, loss.item()))
+            if i % 20 == 0:
+                print("Epoch~{}->{}".format(i+1, loss.item()))
             self.loss_sequence.append(loss.item())
         return
 
@@ -309,7 +312,6 @@ class DhpoTrainerDense():
         self.multi_loss_seq = []
         accu_sum = 0
         for i in range(VALTIMES):
-            self.model.reset_parameters()
             self.train()
             self.multi_loss_seq.append(self.loss_sequence)
             accu_sum += float(self.val())
@@ -319,11 +321,10 @@ class DhpoTrainerDense():
 if __name__ == "__main__":
     # trainer = Trainer(SVHN, TESTPARAM)
     # trainer = DhpoTrainer(MNIST)
-    trainer = DhpoTrainer(SVHN)
+    trainer = DhpoTrainerDense(WINE)
     trainer.train()
     accu = trainer.val()
     print(accu)
-
     # trainer = TrainerDense(IRIS, TESTPARAMDENSE)
     # trainer.train()
     # accu = trainer.val()

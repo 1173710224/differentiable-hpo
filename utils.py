@@ -13,28 +13,6 @@ import pandas as pd
 import torch
 
 
-def bayes():
-    return
-
-
-def zoopt(dataset):
-    dim = Dimension(
-        19,
-        [[16, 32], [1, 8], [1, 1], [1, 1], [16, 32],
-         [1, 8], [1, 1], [1, 1], [0, 1], [1, 8],
-         [1, 10], [0, 1], [1, 8], [1, 10], [40, 50],
-         [30, 40], [20, 30], [10, 20], [0.0001, 0.001]],
-        [False, False, False, False, False,
-         False, False, False, False, False,
-         False, False, False, False, False,
-         False, False, False, True]
-    )
-    obj = Objective(eval, dim)
-    value = 0.95 if type == 'mnist' else 0.8
-    solution = Opt.min(obj, Parameter(budget=20, terminal_value=value))
-    return solution.get_x()
-
-
 class Data():
     '''
     we load huge datasets as two torch-loader: train-loader and test-loader, so as to train them in multi-batches.
@@ -209,6 +187,7 @@ class DataPrefetcher():
         batch = self.batch
         self.preload()
         return batch
+
 
 if __name__ == "__main__":
     data = Data()

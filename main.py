@@ -2,6 +2,7 @@ import pickle
 from const import *
 from optimizers import Optimizer, OptimizerDense
 import argparse
+
 parser = argparse.ArgumentParser(description='main')
 parser.add_argument('--dataset',
                     dest='dataset',
