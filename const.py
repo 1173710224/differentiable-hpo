@@ -26,6 +26,17 @@ MODELS_with_out_hb = [BAYES, ZOOPT, RAND, GENETICA, DEHBNAME,
                       PARTICLESO, DHPO]
 CONVMODELS = [BAYES, ZOOPT, RAND, DEHBNAME,
               DHPO, HYPERBAND, DHPO_ONE_ROUND]
+LABELS = {
+    BAYES: "BO",
+    ZOOPT: "ZOOpt",
+    RAND: "Random",
+    GENETICA: "GA",
+    DEHBNAME: "DEHB",
+    PARTICLESO: "PSO",
+    DHPO: r"DHPO$\star$",
+    HYPERBAND: "HB",
+    DHPO_ONE_ROUND: r"DHPO$\dagger$",
+}
 SMALLS = "smalls"
 
 
@@ -204,5 +215,5 @@ if TESTMODE:
 
 
 if __name__ == "__main__":
-    print(PARAMNAMES)
+    print(LABELS)
     pass

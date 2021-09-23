@@ -442,14 +442,14 @@ if __name__ == "__main__":
     # print(accu)
     # model = Dnn(4, 3, TESTPARAMDENSE)
 
-    model = Linear(4, 1)
-    x = torch.rand((100, 4))
-    y = torch.sum(x, dim=1)
-    trainer = LrMatrixTrainer((x, y), (x, y), model)
-    trainer.lr_train()
-    model.reset_parameters()
-    trainer = LrTrainer((x, y), (x, y), model)
-    trainer.train()
+    # model = Linear(4, 1)
+    # x = torch.rand((100, 4))
+    # y = torch.sum(x, dim=1)
+    # trainer = LrMatrixTrainer((x, y), (x, y), model)
+    # trainer.lr_train()
+    # model.reset_parameters()
+    # trainer = LrTrainer((x, y), (x, y), model)
+    # trainer.train()
 
     # data = Data()
     # train_data, test_data = data.load_iris()
@@ -459,4 +459,8 @@ if __name__ == "__main__":
     # trainer = LrMatrixTrainer(train_data, test_data, model)
     # trainer.lr_train()
     # trainer.train()
+    if torch.cuda.is_available():
+        print("1")
+    else:
+        print(0)
     pass

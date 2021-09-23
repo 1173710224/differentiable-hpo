@@ -176,12 +176,13 @@ def plt_loss(dataset):
     if dataset in [MNIST, SVHN]:
         for i in range(len(data)):
             model = CONVMODELS[i]
+            label = LABELS[model]
             y = data[i]
-            plt.plot(x, y, linewidth=1.5, label=model)
+            plt.plot(x, y, linewidth=1.5, label=label)
     else:
         for i in range(len(data)):
             model = MODELS_with_out_hb[i]
-            print(model)
+            label = LABELS[model]
             y = data[i]
             plt.plot(x, y, linewidth=1.5, label=model)
     plt.legend()
@@ -289,10 +290,10 @@ if __name__ == "__main__":
     # construct_loss_with_dataset_and_model(dataset, HYPERBAND)
     # construct_loss_with_dataset_and_model(dataset, DEHBNAME)
     # construct_loss_with_dataset_and_model(dataset, DHPO_ONE_ROUND)
-    # plt_loss(CAR)
+    plt_loss(MNIST)
 
-    # construct_table_data_with_dataset(CAR)
-    study = case_study()
-    # study.plt_loss()
-    study.plt_accu()
+    # # construct_table_data_with_dataset(CAR)
+    # study = case_study()
+    # # study.plt_loss()
+    # study.plt_accu()
     pass
