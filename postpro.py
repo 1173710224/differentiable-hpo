@@ -178,12 +178,14 @@ def plt_loss(dataset):
             model = CONVMODELS[i]
             label = LABELS[model]
             y = data[i]
+            plt.yscale("log")
             plt.plot(x, y, linewidth=1.5, label=label)
     else:
         for i in range(len(data)):
             model = MODELS_with_out_hb[i]
             label = LABELS[model]
             y = data[i]
+            plt.yscale("log")
             plt.plot(x, y, linewidth=1.5, label=model)
     plt.legend()
     plt.savefig("loss_fig/{}.png".format(dataset))
