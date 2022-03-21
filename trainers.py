@@ -329,14 +329,26 @@ class DhpoTrainerDense():
 
 
 if __name__ == "__main__":
-    trainer = Trainer(MNIST, param1)
-    print(trainer.multi_obj())
-    trainer = Trainer(MNIST, param2)
-    print(trainer.multi_obj())
-    trainer = Trainer(MNIST, param3)
-    print(trainer.multi_obj())
-    trainer = Trainer(MNIST, param4)
-    print(trainer.multi_obj())
-    trainer = Trainer(MNIST, param5)
-    print(trainer.multi_obj())
+    # trainer = Trainer(MNIST, param1)
+    # print(trainer.multi_obj())
+    # trainer = Trainer(MNIST, param2)
+    # print(trainer.multi_obj())
+    # trainer = Trainer(MNIST, param3)
+    # print(trainer.multi_obj())
+    # trainer = Trainer(MNIST, param4)
+    # print(trainer.multi_obj())
+    # trainer = Trainer(MNIST, param5)
+    # print(trainer.multi_obj())
+    trainer = Trainer(SVHN, param_plain)
+    accu_seq = []
+    for i in range(10):
+        trainer.train()
+        accu = trainer.val().cpu().numpy()
+        print(f"accu:{accu}")
+        accu_seq.append(accu)
+    accu_seq = np.array(accu_seq)
+    print(f"{accu_seq.max()}\t\
+        {accu_seq.mean()}\t{accu_seq.std()}\t\
+        {accu_seq[:5].mean()}\t{accu_seq[:5].std()}\t\
+        {accu_seq[:10].mean()}\t{accu_seq[:10].std()}")
     pass
